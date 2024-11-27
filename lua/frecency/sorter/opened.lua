@@ -8,8 +8,9 @@ local Opened = setmetatable({}, { __index = Default })
 ---@return FrecencySorterOpened
 Opened.new = function()
   local self = setmetatable(Default.new(), { __index = Opened }) --[[@as FrecencySorterOpened]]
-  self.buffers = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs())
-  self.buffers_map = vim.iter(self.buffers):fold({}, function(a, b)
+  local it = vim.iter(vim.api.nvim_list_bufs()):map(vim.api.nvim_buf_get_name)
+  self.buffers = it:totable()
+  self.buffers_map = it:fold({}, function(a, b)
     a[b] = true
     return a
   end)

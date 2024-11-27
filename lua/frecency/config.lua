@@ -158,10 +158,13 @@ end
 ---@return string[]
 Config.ignore_regexes = function()
   if not config.cached_ignore_regexes then
-    config.cached_ignore_regexes = vim.tbl_map(function(pattern)
-      local regex = vim.pesc(pattern):gsub("%%%*", ".*"):gsub("%%%?", ".")
-      return "^" .. regex .. "$"
-    end, config.ignore_patterns)
+    config.cached_ignore_regexes = vim
+      .iter(config.ignore_patterns)
+      :map(function(pattern)
+        local regex = vim.pesc(pattern):gsub("%%%*", ".*"):gsub("%%%?", ".")
+        return "^" .. regex .. "$"
+      end)
+      :totable()
   end
   return config.cached_ignore_regexes
 end
