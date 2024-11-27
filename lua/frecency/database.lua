@@ -170,26 +170,24 @@ end
 ---@return FrecencyDatabaseEntry[]
 function Database:get_entries(workspaces, epoch)
   local now = epoch or os.time()
-  ---@param path string
-  ---@return boolean
-  local function in_workspace(path)
-    return not workspaces
-      or vim.iter(workspaces):any(function(workspace)
-        return fs.starts_with(path, workspace)
-      end)
-  end
   return vim
     .iter(self.tbl.records)
     :filter(function(path, _)
-      return in_workspace(path)
+      return not workspaces
+        or vim.iter(workspaces):any(function(workspace)
+          return fs.starts_with(path, workspace)
+        end)
     end)
     :map(function(path, record)
       return {
         path = path,
         count = record.count,
-        ages = vim.tbl_map(function(v)
-          return (now - v) / 60
-        end, record.timestamps),
+        ages = vim
+          .iter(record.timestamps)
+          :map(function(timestamp)
+            return (now - timestamp) / 60
+          end)
+          :totable(),
         timestamps = record.timestamps,
       }
     end)

@@ -9,10 +9,10 @@ local Opened = setmetatable({}, { __index = Default })
 Opened.new = function()
   local self = setmetatable(Default.new(), { __index = Opened }) --[[@as FrecencySorterOpened]]
   self.buffers = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs())
-  self.buffers_map = {}
-  for _, buffer in ipairs(self.buffers) do
-    self.buffers_map[buffer] = true
-  end
+  self.buffers_map = vim.iter(self.buffers):fold({}, function(a, b)
+    a[b] = true
+    return a
+  end)
   return self
 end
 
