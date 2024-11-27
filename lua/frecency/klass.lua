@@ -226,9 +226,9 @@ function Frecency:query(opts, epoch)
   local workspaces = type(opts.workspace) == "table" and opts.workspace
     or type(opts.workspace) == "string" and { opts.workspace }
     or nil
-  ---@param entry FrecencyDatabaseEntry
   local entries = vim
     .iter(self.database:get_entries(workspaces, epoch))
+    ---@param entry FrecencyDatabaseEntry
     :map(function(entry)
       return {
         count = entry.count,
